@@ -113,11 +113,6 @@
   const yesBtn = document.getElementById("yes");
   const music = document.getElementById("music");
 
-  /* ---------- MUSIC (mobile-safe) ---------- */
-  document.addEventListener("click", () => {
-    music.play().catch(() => {});
-  }, { once: true });
-
   /* ---------- NO BUTTON ESCAPE ---------- */
   function moveNoButton() {
     const padding = 20;
@@ -134,19 +129,28 @@
     noBtn.style.top = y + "px";
   }
 
-  // Desktop
+  /* Desktop: hover */
   noBtn.addEventListener("mouseover", moveNoButton);
 
-  // Mobile
+  /* Mobile: touch */
   noBtn.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // stop click
+    e.preventDefault();
+    e.stopPropagation();        // 🔑 prevents bubbling
     if (navigator.vibrate) navigator.vibrate(40);
     moveNoButton();
   });
 
+  /* Block accidental clicks on NO (mobile safety) */
+  noBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
   /* ---------- YES CLICK ---------- */
-  yesBtn.addEventListener("click", () => {
-    music.play();
+  yesBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    music.play().catch(() => {});
 
     document.getElementById("main").innerHTML = `
       <h1>Yayyy!! 💖</h1>
